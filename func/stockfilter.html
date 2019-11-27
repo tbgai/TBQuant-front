@@ -6,95 +6,168 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
     <title>StockFilter</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
 
     <link rel="shortcut icon" href="favicon.ico"> <link href="../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
     <link href="../css/font-awesome.css?v=4.4.0" rel="stylesheet">
-
+	<link href="../css/plugins/iCheck/custom.css" rel="stylesheet">
+	<!-- Sweet Alert -->
+    <link href="../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <link href="../css/animate.css" rel="stylesheet">
     <link href="../css/style.css?v=4.1.0" rel="stylesheet">
-    <link href="../css/stockfilter.css" rel="stylesheet">
 
 </head>
 
 <body class="gray-bg">
-    <div class="row  border-bottom white-bg dashboard-header">
-        <div class="col-sm-12">
-            <p>StockFilter...
-            </p>
-
-        </div>
-
+	<div class="wrapper wrapper-content animated fadeInRight">
+    
+    <div class="row">
+    	<div class="col-sm-12">
+    		<div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>股票过滤 <small>通过量化模型过滤股票</small></h5>
+                        
+                    </div>
+                    <div class="ibox-content">
+                        <form method="get" class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">基准数据</label>
+                                <div class="col-sm-10">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="txt_basestk" value="20.31,21.27,21.89,21.53,22.65,22.98,23.23,22.7,22.34,21.76,22.09,21.6,21.9,21.88,23.1,22.99,22.54,22.63,22.52,22.99">
+                                        <span class="input-group-btn"> <button type="button" class="btn btn-primary" id="btn_basegraph" onclick="baseGraph()">绘图
+                                        </button> </span>
+                                    </div>
+                                    <span class="help-block m-b-none">可以根据需要自行修改设定基准模型参数（10~40）</span>
+                                	<div id="div_basegraph">
+										<img id="base_img1" src="" height="300">
+										<img id="base_img2" src="" height="300">
+										<img id="base_img3" src="" height="300">
+									</div>
+                                </div>
+                                
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">二阶过滤</label>
+                                <div class="col-sm-10">
+                                	<div class="checkbox i-checks">
+                                        <label>
+                                            <input type="checkbox" id="chk_delta2" value="0" checked="true"> <i></i></label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">一阶因子</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" id="txt_delta1" value="1.05"> <span class="help-block m-b-none">取值范围（0.0~3.0）</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">二阶因子</label>
+                                <div class="col-sm-4">
+                                	<input type="text" class="form-control" id="txt_delta2" value="1.1"> <span class="help-block m-b-none">取值范围（0.0~3.0）</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">股票曲线展示记录数</label>
+                                <div class="col-sm-4">
+                                	<input type="text" class="form-control" id="txt_stkcount" value="100"> <span class="help-block m-b-none">取值范围（30~200）</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">股票范围</label>
+                                <div class="col-sm-10">
+                                    <p class="form-control-static">当前处理范围为全部股票。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="hr-line-dashed"></div>
+                            
+                            <div class="form-group">
+                            	<label class="col-sm-2 control-label">过滤处理</label>
+                                <div class="col-sm-4">
+                                    <button id="btn_query" class="btn btn-primary" type="button" onclick="putParam()">提交处理</button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                            	<label class="col-sm-2 control-label">处理过程</label>
+                                <div class="col-sm-10">
+									<div class="progress progress-striped">
+										<div id="processbar" style="width: 0%" aria-valuemax="100" aria-valuemin="0" role="progressbar" class="progress-bar">
+										</div>	
+							  		</div>
+							  		<label id="process_time">00:00:00</label>
+						  		</div>
+                            </div>
+                            
+                            <div class="hr-line-dashed"></div>
+                            
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">过滤结果</label>
+                                <div class="col-sm-10">
+                                    <p class="form-control-static" id="filterres_p" style="word-break: normal;white-space: pre-wrap;word-wrap:break-word;"></p>
+                                    <div>
+										<table class="table table-bordered" id="res_table">
+										    <thead>
+											    <tr>
+											        <th>股票代码</th>
+											        <th>图形</th>
+											    </tr>
+										    </thead>
+										</table>
+									</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                            	<label class="col-sm-2 control-label">图片下载</label>
+                                <div class="col-sm-4">
+                                    <button id="btn_download" class="btn btn-primary" type="button" onclick="downloadimg()">下载图片包</button>
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+    		
+    	</div>
     </div>
     
-    <h2>参数设置</h2>
-	<h3>1）基准数据（可以根据需要自行修改设定[10~40]）：</h3>
-	<div align="center">
-		<input type="text" name="basestk" id="basestk_txt" class="item_text1" value="20.31,21.27,21.89,21.53,22.65,22.98,23.23,22.7,22.34,21.76,22.09,21.6,21.9,21.88,23.1,22.99,22.54,22.63,22.52,22.99">
-		<button id="btn_basegraph" onclick="baseGraph()">绘图</button>
-	</div>
-	<div align="center" id="div_basegraph">
-		<img id="base_img1" src="" height="300">
-		<img id="base_img2" src="" height="300">
-		<img id="base_img3" src="" height="300">
-	</div>
-    <h3>2）算法参数：</h3>
-		<label>是否二阶过滤：</label><input type="checkbox" id="delta2_chk" value="0" checked="true">
-		<br>
-		<label>一阶因子：</label><input type="text" name="delta_one" id="delta1_txt" value="1.05">(0~3)
-		<br>
-		<label>二阶因子：</label><input type="text" name="delta_two" id="delta2_txt" value="1.1">(0~3)
-		
-		<h3>3）输出配置：</h3>
-		<label>股票曲线展示记录数：</label><input type="number" name="stk_count" id="stkcount_num" value="100" min="30" max="200">(30~200)
-		
-		<h3>4）股票范围：</h3>
-		<label>当前处理为全部股票。</label>
-		
-		<div align="center">
-			<button id="btn_query" onclick="putParam()">提交处理</button>
-		</div>
-		
-		<hr>
-		<h2>处理过程</h2>
-		<div align="center">
-			<div class="processcontainer">
-				<div id="processbar" style="width:0%;"></div>
-	  		</div>
-	  		<label id="process_time">00:00:00</label>
-  		</div>
-		
-		<hr>
-		<h2>处理结果</h2>
-		<h3>过滤结果：</h3>
-		<p id="filterres_p">  </p>
-		<label>图片下载：</label><button id="btn_download" onclick="downloadimg()">下载图片包</button>
-		<div align="center">
-			<table border="1" id="res_table">
-			    <tr>
-			        <th>股票代码</th>
-			        <th>图形</th>
-			    </tr>
-			</table>
-		</div>
-		<h5> </h5>
+    </div>
     
     	
     <!-- 全局js -->
     <script src="../js/jquery.min.js?v=2.1.4"></script>
-
     <script src="../js/bootstrap.min.js?v=3.3.6"></script>
 
     <!-- ECharts -->
     <script src="../js/plugins/echarts/echarts-all.js"></script>
 
+	<!-- Sweet alert -->
+    <script src="../js/plugins/sweetalert/sweetalert.min.js"></script>
+    
     <!-- 自定义js -->
     <script src="../js/content.js?v=1.0.0"></script>
     <script src="../js/stf.js"></script>
 
+    <!-- iCheck -->
+    <script src="../js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green',
+            });
+        });
+    </script>
 
 </body>
 
