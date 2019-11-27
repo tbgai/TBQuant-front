@@ -1,4 +1,4 @@
-var SERVER_URL = 'http://127.0.0.1:5000/sf/api/v1.0/';
+var SERVER_URL = 'http://47.104.252.239:8090/sf/api/v1.0/';
 var pos = 0;
 var bartimer;
 var gSid = '';
@@ -11,14 +11,14 @@ $(document).ready(function(){
 
 	$("#div_basegraph").hide();
 	$("#res_table").hide();
-
 });
+
 
 function baseGraph(){
 	
 	$(document).ready(function(){
 		
-		var basestk = $("#basestk_txt").val();
+		var basestk = $("#txt_basestk").val();
 		basestk = jQuery.trim( basestk );
 		if ( basestk.length == "" ) {
 			alert("基准股票数据不能为空");
@@ -78,7 +78,7 @@ function putParam(){
 		if ( !confirm("参数设置确认吗？") ){
 			return;
 		}
-		var basestk = $("#basestk_txt").val();
+		var basestk = $("#txt_basestk").val();
 		basestk = jQuery.trim( basestk );
 		if ( basestk == "" ) {
 			alert("基准股票数据不能为空");
@@ -94,30 +94,31 @@ function putParam(){
 		
 		var delta2 = [];
 		var delta2val = 0;
-		$('input[id="delta2_chk"]:checked').each(function(){//遍历每一个id为delta2_chk的复选框，其中选中的执行函数    
+		$('input[id="chk_delta2"]:checked').each(function(){//遍历每一个id为delta2_chk的复选框，其中选中的执行函数    
             delta2.push($(this).val());//将选中的值添加到数组delta2中
             });
 		if ( delta2.length > 0 ){
 			delta2val = 1;
 		}
 
-		var delta1factor = $("#delta1_txt").val();
+		var delta1factor = $("#txt_delta1").val();
 		delta1factor = parseFloat(delta1factor);
-		if ( delta1factor <=0 || delta1factor > 3 )
+		if ( isNaN(delta1factor) || delta1factor <=0 || delta1factor > 3 )
 		{
-			alert( "一阶因子范围：0< 因子 <=3 " );
+			alert( "一阶因子范围：0.0< 因子 <=3.0 " );
 			return;
 		}
-		var delta2factor = $("#delta2_txt").val();
-		if ( delta2factor <=0 || delta2factor > 3 )
+		var delta2factor = $("#txt_delta2").val();
+		delta2factor = parseFloat( delta2factor );
+		if ( isNaN(delta2factor) || delta2factor <=0 || delta2factor > 3 )
 		{
-			alert( "二阶因子范围：0< 因子 <=3 " );
+			alert( "二阶因子范围：0.0< 因子 <=3.0 " );
 			return;
 		}
 
-		var stkcount_num = $("#stkcount_num").val();
+		var stkcount_num = $("#txt_stkcount").val();
 		stkcount_num = parseInt(stkcount_num);
-		if ( stkcount_num < 30 || stkcount_num > 200 )
+		if ( isNaN(stkcount_num) ||stkcount_num < 30 || stkcount_num > 200 )
 		{
 			alert( "股票曲线展示记录数范围：30 <= 记录数 <=200 " );
 			return;
@@ -278,3 +279,6 @@ function downloadimg(){
 		alert( "当前暂无可下载的结果图片，请先提交过滤处理！" );
 	}
 }
+
+
+
