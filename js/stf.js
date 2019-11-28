@@ -1,4 +1,4 @@
-var SERVER_URL = 'http://47.104.252.239:8090/sf/api/v1.0/';
+var SERVER_URL = 'http://127.0.0.1:5000/sf/api/v1.0/';
 var pos = 0;
 var bartimer;
 var gSid = '';
